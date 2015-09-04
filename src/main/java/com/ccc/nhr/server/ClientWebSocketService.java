@@ -8,6 +8,8 @@ package com.ccc.nhr.server;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
@@ -18,6 +20,12 @@ import org.java_websocket.server.WebSocketServer;
  * @author davidchang
  */
 public class ClientWebSocketService extends WebSocketServer {
+
+    CoordinatorCommandService ccs;
+
+    public void setCcs(CoordinatorCommandService ccs) {
+        this.ccs = ccs;
+    }
 
     public ClientWebSocketService(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
@@ -43,6 +51,11 @@ public class ClientWebSocketService extends WebSocketServer {
     public void onMessage(WebSocket ws, String message) {
         this.sendToAll(message);
         System.out.println(ws + ": " + message);
+        try {
+            ccs.sendCommand(message);
+        } catch (Exception e) {
+
+        }
     }
 
     public void onFragment(WebSocket conn, Framedata fragment) {
@@ -69,6 +82,31 @@ public class ClientWebSocketService extends WebSocketServer {
             for (WebSocket c : con) {
                 c.send(text);
             }
+        }
+    }
+}
+
+class ClientWebSocketThread extends Thread {
+
+    private int clientPort;
+    private ClientWebSocketService cwss;
+    private CoordinatorCommandService ccs;
+
+    public ClientWebSocketThread(int clientPort, CoordinatorCommandService ccs) {
+        this.clientPort = clientPort;
+        this.ccs = ccs;
+    }
+
+    @Override
+    public void run() {
+        try {
+            cwss = new ClientWebSocketService(clientPort);
+            cwss.setCcs(ccs);
+            cwss.start(); //start webSocket Service
+            System.out.println("ClientWebSocketService started on port: " + clientPort);
+
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ClientWebSocketThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

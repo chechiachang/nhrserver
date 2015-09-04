@@ -7,6 +7,9 @@ com/ccc/nhr/server/CoordinatorDataThread.class
 com/ccc/nhrservlet/NhrData.class
 com/ccc/nhr/server/Command.class
 com/ccc/nhr/server/ClientWebSocketThread.class
+com/ccc/nhr/newserver/Coordinator.class
+com/ccc/nhr/newserver/Controller.class
+com/ccc/nhr/newserver/MainServer.class
 com/ccc/nhr/server/DatabaseConnector.class
 com/ccc/nhrservlet/ChatClient$1.class
 com/ccc/nhrservlet/ChatClient$2.class

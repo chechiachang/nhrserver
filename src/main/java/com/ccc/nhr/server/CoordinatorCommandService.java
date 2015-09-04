@@ -49,3 +49,24 @@ public class CoordinatorCommandService {
         return data;
     }
 }
+
+class CoordinatorCommandThread extends Thread {
+
+    private CoordinatorCommandService ccs;
+
+    public CoordinatorCommandThread(CoordinatorCommandService ccs) {
+        this.ccs = ccs;
+    }
+
+    @Override
+    public void run() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            while (true) {
+                ccs.sendCommand(scanner.next());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(CoordinatorCommandThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}

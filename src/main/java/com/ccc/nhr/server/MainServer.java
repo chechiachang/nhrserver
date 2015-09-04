@@ -31,15 +31,16 @@ public class MainServer {
         //public service
         CoordinatorCommandService ccs = new CoordinatorCommandService(socket);
 
-        CoordinatorDataThread cdt = new CoordinatorDataThread(socket);
-        cdt.start();
-
         //Command Service listen to Console
         CoordinatorCommandThread cct = new CoordinatorCommandThread(ccs);
         cct.start();
         //Client WerSocket Service
-        ClientWebSocketThread cwst = new ClientWebSocketThread(clientPort);
+        ClientWebSocketThread cwst = new ClientWebSocketThread(clientPort, ccs);
         cwst.start();
+        //
+        CoordinatorDataThread cdt = new CoordinatorDataThread(socket);
+        cdt.start();
+
     }
 }
 
@@ -62,45 +63,4 @@ class CoordinatorDataThread extends Thread {
     }
 }
 
-class ClientWebSocketThread extends Thread {
 
-    private int clientPort;
-    private ClientWebSocketService cwss;
-
-    public ClientWebSocketThread(int clientPort) {
-        this.clientPort = clientPort;
-    }
-
-    @Override
-    public void run() {
-        try {
-            cwss = new ClientWebSocketService(clientPort);
-            cwss.start();
-            System.out.println("ClientWebSocketService started on port: " + clientPort);
-
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(ClientWebSocketThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-}
-
-class CoordinatorCommandThread extends Thread {
-
-    private CoordinatorCommandService ccs;
-
-    public CoordinatorCommandThread(CoordinatorCommandService ccs) {
-        this.ccs = ccs;
-    }
-
-    @Override
-    public void run() {
-        try {
-            Scanner scanner = new Scanner(System.in);
-            while (true) {
-                ccs.sendCommand(scanner.next());
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(CoordinatorCommandThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-}
