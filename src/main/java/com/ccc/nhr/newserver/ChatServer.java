@@ -1,5 +1,6 @@
-package com.ccc.nhrservlet;
+package com.ccc.nhr.newserver;
 
+import com.ccc.nhr.servlet.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
