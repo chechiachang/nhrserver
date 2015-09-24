@@ -33,11 +33,10 @@
         <script src='assets/fullcalendat/js/zh-tw.js'></script>
         <!-- nhr data -->
         <script src="assets/nhr/js/nhrdata.js"></script>
-        <script src="assets/nhr/js/websocket.js"></script>
         <link rel="stylesheet" href="assets/nhr/css/nhr.css">
         <!-- Custom -->
         <link rel="stylesheet" href="css/index.css">
-        
+        <link rel="stylesheet" href="css/devices.css">
     </head>
     <body>
         <jsp:include page="navbar.jsp"></jsp:include>
@@ -46,14 +45,7 @@
             <div class="col-lg-12">
                 <h1>Nhr Devices</h1>
             </div>
-            <div class="col-lg-2">
-                <div id="send">
-                    <a href="javascript:doSend('query');">query</a>
-                    <a href="javascript:doSend('sirenon');">sirenon</a>
-                </div>
-                <div id="output"></div>    
-            </div>
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <div id="floor1">
 
                 </div>

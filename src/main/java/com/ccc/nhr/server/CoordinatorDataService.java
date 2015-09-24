@@ -112,30 +112,50 @@ public class CoordinatorDataService {
                     System.out.println(Arrays.toString(output));
 
                     //Save data into database
-                    if(output.length > 35){   // Cluster Library device power status reply, length = 0x21 = 33, +2 null = 35
-                        
-                    }else if (output.length > 31) {   // Cluster Library device reply data, length = 0x1e = 30, +2 null = 32
+                    if (output.length > 35) {   // Cluster Library device power status reply, length = 0x21 = 33, +2 null = 35
+                        switch (output[17] + output[18]) {  //switch Cluster ID
+                            case "0001":    //ZigBee Cluster Library power config battery voltage ID 0x0405
+                                String voltage = String.valueOf((double) Integer.parseInt(output[28], 16) / 10);
+                                String battery = "00".equals(output[32]) ? "0" : "1";
+                                pstmt = conn.prepareStatement("INSERT INTO `data` (`voltage`, `battery`) VALUES (?,?) WHERE `mac_cluster_id` = ? AND `short_mac` = ? ");
+                                pstmt.setString(1, voltage);
+                                pstmt.setString(2, battery);
+                                pstmt.setString(3, returnOutput(5, 12));
+                                pstmt.setString(4, returnOutput(13, 14));
+                                pstmt.executeUpdate();
+                                if (isPrintout) {
+                                    out = "Mac Address: " + returnOutput(5, 12) + " Device Short Mac: " + returnOutput(13, 14) + " Cluster ID: " + "0001" + " Data: " + voltage + " V";
+                                    System.out.println(out);
+                                }
+                                break;
+                        }   //switch
+                    } else if (output.length > 31) {   // Cluster Library device reply data, length = 0x1e = 30, +2 null = 32
                         String data = String.valueOf(Integer.parseInt(output[29] + output[28], 16));
-                        String clusterId = "0405";
                         switch (output[17] + output[18]) {  //switch Cluster ID
                             case "0001":    //ZigBee Cluster Library power configuration cluster ID
                                 break;
                             case "0405":    //0405 ZigBee Cluster Library relative humidity measurement cluster ID
-                                clusterId = "0405";
+                                pstmt = conn.prepareStatement("INSERT INTO `data` (`mac_cluster_id`, `short_mac`, `data`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE data=VALUES(data)");
+                                pstmt.setString(1, returnOutput(5, 12));
+                                pstmt.setString(2, returnOutput(13, 14));
+                                pstmt.setString(3, data.substring(0, 2) + "." + data.substring(2, 4));
+                                pstmt.executeUpdate();
+                                if (isPrintout) {
+                                    out = "Mac Address: " + returnOutput(5, 12) + " Device Short Mac: " + returnOutput(13, 14) + " Cluster ID: " + "0405" + " Data: " + data.substring(0, 2) + "." + data.substring(2, 4) + " %";
+                                    System.out.println(out);
+                                }
                                 break;
                             case "0402":    //ZigBee Cluster Library relative humidity measurement cluster ID 0x0405
-                                clusterId = "0402";
+                                pstmt = conn.prepareStatement("INSERT INTO `data` (`mac_cluster_id`, `short_mac`, `data2`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE data=VALUES(data2)");
+                                pstmt.setString(1, returnOutput(5, 12));
+                                pstmt.setString(2, returnOutput(13, 14));
+                                pstmt.setString(3, data.substring(0, 2) + "." + data.substring(2, 4));
+                                pstmt.executeUpdate();
+                                if (isPrintout) {
+                                    out = "Mac Address: " + returnOutput(5, 12) + " Device Short Mac: " + returnOutput(13, 14) + " Cluster ID: " + "0402" + " Data: " + data.substring(0, 2) + "." + data.substring(2, 4) + " %";
+                                    System.out.println(out);
+                                }
                                 break;
-                        }
-                        pstmt = conn.prepareStatement("INSERT INTO `data` (`mac_cluster_id`, `short_mac`, `cluster_id`, `data`) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE data=VALUES(data)");
-                        pstmt.setString(1, returnOutput(5, 12) + "0405");
-                        pstmt.setString(2, returnOutput(13, 14));
-                        pstmt.setString(3, clusterId);
-                        pstmt.setString(4, data.substring(0, 2) + "." + data.substring(2, 4));
-                        pstmt.executeUpdate();
-                        if (isPrintout) {
-                            out = "Mac Address: " + returnOutput(5, 12) + " Device Short Mac: " + returnOutput(13, 14) + " Cluster ID: " + "0405" + " Data: " + data.substring(0, 2) + "." + data.substring(2, 4) + " %";
-                            System.out.println(out);
                         }
                     } else if (output.length > 28) {    //data , length = 0x1e = 30, +2 null = 32
                         String IASCmd = "";
@@ -155,19 +175,18 @@ public class CoordinatorDataService {
                                         IASCmd = "off/low";
                                         break;
                                 }
-                                pstmt = conn.prepareStatement("INSERT INTO `data` (`mac_cluster_id`, `short_mac`, `cluster_id`, `data`) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE data=VALUES(data)");
-                                pstmt.setString(1, returnOutput(5, 12) + "0500");
+                                pstmt = conn.prepareStatement("INSERT INTO `data` (`mac_cluster_id`, `short_mac`, `data`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE data=VALUES(data)");
+                                pstmt.setString(1, returnOutput(5, 12));
                                 pstmt.setString(2, returnOutput(13, 14));
-                                pstmt.setString(3, "0500");
-                                pstmt.setString(4, IASCmd);
+                                pstmt.setString(3, IASCmd);
                                 pstmt.executeUpdate();
                                 if (isPrintout) {
                                     System.out.println("Mac Address: " + returnOutput(5, 12) + " Device Short Mac: " + returnOutput(13, 14) + " Cluster ID: " + "0500" + " Data: " + "on");
                                 }
                                 break;
                         }
-                    }else if(output.length > 21){   // Local Command query reply packet [19+2]
-                        
+                    } else if (output.length > 21) {   // Local Command query reply packet [19+2]
+
                     }
                     count = 0;
 

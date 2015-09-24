@@ -1,56 +1,25 @@
-
-    var wsUri = "ws://localhost:10020/";
-    var output;
-
-    function init() {
-        output = document.getElementById("output");
-        testWebSocket();
-    }
-
-    function testWebSocket() {
-        websocket = new WebSocket(wsUri);
-        websocket.onopen = function (evt) {
-            onOpen(evt)
+function WebSocket(){
+    if ("WebSocket" in window){
+        alert("WebSocket is supported by your browser!");
+        
+        var ws = new WebSocket("wss://localhost:10020");
+        
+        ws.onopen = function(){
+            //WebSocket is connected, send data using send()
+            ws.send("Message to send");
+            alert("Message id sent...");
         };
-        websocket.onclose = function (evt) {
-            onClose(evt)
+        
+        ws.onclose = function(evt){
+            var received_msg = evt.data;
+            alert("Message is received...");
         };
-        websocket.onmessage = function (evt) {
-            onMessage(evt)
+        
+        ws.onclose = function(){
+            //web socket id closed.
+            alert("Connection is closed...");
         };
-        websocket.onerror = function (evt) {
-            onError(evt)
-        };
+    }else{
+        //the browser doesn't support WebSocket
     }
-
-    function onOpen(evt) {
-        writeToScreen("CONNECTED");
-        doSend("WebSocket rocks");
-    }
-
-    function onClose(evt) {
-        writeToScreen("DISCONNECTED");
-    }
-
-    function onMessage(evt) {
-        writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
-        //websocket.close();
-    }
-
-    function onError(evt) {
-        writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
-    }
-
-    function doSend(message) {
-        writeToScreen("SENT: " + message);
-        websocket.send(message);
-    }
-
-    function writeToScreen(message) {
-        var pre = document.createElement("p");
-        pre.style.wordWrap = "break-word";
-        pre.innerHTML = message;
-        output.appendChild(pre);
-    }
-
-    window.addEventListener("load", init, false);
+}
