@@ -117,7 +117,7 @@ public class CoordinatorDataService {
                             case "0001":    //ZigBee Cluster Library power config battery voltage ID 0x0405
                                 String voltage = String.valueOf((double) Integer.parseInt(output[28], 16) / 10);
                                 String battery = "00".equals(output[32]) ? "0" : "1";
-                                pstmt = conn.prepareStatement("INSERT INTO `data` (`voltage`, `battery`) VALUES (?,?) WHERE `mac_cluster_id` = ? AND `short_mac` = ? ");
+                                pstmt = conn.prepareStatement("UPDATE `data` SET `voltage` = ?, `battery` = ? WHERE `mac_cluster_id` = ? AND `short_mac` = ? ");
                                 pstmt.setString(1, voltage);
                                 pstmt.setString(2, battery);
                                 pstmt.setString(3, returnOutput(5, 12));
