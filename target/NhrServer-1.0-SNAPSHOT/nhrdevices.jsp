@@ -49,6 +49,7 @@
                 <div id="floor1">
 
                 </div>
+
             </div><!--col-lg-10-->
             <div class="col-lg-2">
 

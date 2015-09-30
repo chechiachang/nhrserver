@@ -61,7 +61,8 @@ class CoordinatorCommandThread extends Thread {
     @Override
     public void run() {
         try {
-            Scanner scanner = new Scanner(System.in);
+            ccs.sendCommand("query");   //statup query
+            Scanner scanner = new Scanner(System.in);   //Console scan for command
             while (true) {
                 ccs.sendCommand(scanner.next());
             }
