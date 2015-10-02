@@ -10,9 +10,9 @@ and open the template in the editor.
 
 .nhr{
     padding:3px;
-    color:orange;
-    background: rgba(0,0,0,0.7);
-    border:orange solid 2px;
+    color:black;
+    background: rgba(10,10,80,0.8);
+    border:orange solid 4px;
     border-radius: 20px;
     float:left;
     cursor: pointer;
@@ -20,33 +20,21 @@ and open the template in the editor.
 
 .nhr.on{
     color:greenyellow;
-    border:greenyellow solid 2px;
-    background: rgba(0,0,0,0.7);
-    border-radius: 20px;
 }
 .nhr.off{
     color:crimson;
-    border:crimson solid 2px;
-    background: rgba(0,0,0,0.7);
-    border-radius: 20px;
 }
 .nhr.up{
     color:greenyellow;
-    border:greenyellow solid 2px;
 }
 .nhr.hold{
     color:greenyellow;
-    border:greenyellow solid 2px;
 }
 .nhr.down{
     color:greenyellow;
-    border:greenyellow solid 2px;
 }
 .nhr.sensor{
     color:aqua;
-    border:aqua solid 2px;
-    background: rgba(0,0,0,0.7);
-    border-radius: 20px;
 }
 .nhr>div{
     float:left;
@@ -66,11 +54,17 @@ and open the template in the editor.
     margin: 0;
     font-size: 12px;
 }
+.nhr span{
+    color: black;
+}
 .nhr.small{
     transform: "scale(0.5, 0.5)";
 }
 .nhr.small ul{
     display:none;
+}
+div.nhr div.datatext{
+    font-size:0.8em;
 }
 
 .title a{
@@ -79,8 +73,8 @@ and open the template in the editor.
     color:white;
 }
 #device_table{
-    margin-top:50px;
-    font-size: 20px;
+    //margin-top:50px;
+    font-size: 16px;
 
 }
 li a{

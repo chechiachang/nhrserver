@@ -5,6 +5,7 @@
  */
 package com.ccc.nhrservlet;
 
+
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,9 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -62,7 +61,7 @@ public class NhrDataJsonServlet extends HttpServlet {
                 switch (cmd) {
                     case "getdata":
                         stmt = conn.createStatement();
-                        String strSql = "SELECT `type`, `address`, `short_mac`, `cluster_id`, `data`, `data2`, `position` From `data`";
+                        String strSql = "SELECT `type`, `address`, `short_mac`, `cluster_id`, `data`, `data2`, `voltage`, `battery`, `position` From `data`";
                         rs = stmt.executeQuery(strSql);
 
                         List list = new ArrayList<>();
@@ -75,8 +74,9 @@ public class NhrDataJsonServlet extends HttpServlet {
                             nhrData.setClusterId(rs.getString("cluster_id"));
                             nhrData.setData(rs.getString("data"));
                             nhrData.setData2(rs.getString("data2"));
+                            nhrData.setVoltage(rs.getString("voltage"));
+                            nhrData.setBattery(rs.getString("battery"));
                             nhrData.setPosition(rs.getString("position"));
-
                             list.add(nhrData);
                         }
                         rs.close();
@@ -84,6 +84,16 @@ public class NhrDataJsonServlet extends HttpServlet {
                         response.setContentType("application/json");
                         response.setContentType("text/html;charset=UTF-8");
                         out.write(json);
+                        break;
+                    case "position":
+                        String address = request.getParameter("address");
+                        String left = request.getParameter("left");
+                        String top = request.getParameter("top");
+                        pstmt = conn.prepareStatement("UPDATE `data` SET `position` = ? WHERE `address` = ? ");
+                        pstmt.setString(1, left + "," + top);
+                        pstmt.setString(2, address);
+                        String result = String.valueOf(pstmt.executeUpdate());
+                        out.write(result);
                         break;
                 }
 
